@@ -50,12 +50,9 @@ function drawFrame() {
     svgStr += `<line x1="${m + cw - fsW}" y1="${footerMidY}" x2="${m + cw}" y2="${footerMidY}" stroke="black" stroke-width="1" style="pointer-events:none;"/>`;
 
     // --- INTERAKTIVE TEXTE ---
-    // Funktion zum Erstellen editierbarer Texte
     const createEditableText = (x, y, id, defaultStr, size, anchor = "start", weight = "normal") => {
-        // Wir speichern den Text in einem globalen Objekt, damit er beim Neuzeichnen erhalten bleibt
         if (!window.frameData) window.frameData = {};
         const content = window.frameData[id] || defaultStr;
-        
         return `<text class="editable-frame-text" data-id="${id}" x="${x}" y="${y}" dy="0.3em" text-anchor="${anchor}" font-family="Arial" font-size="${size}" font-weight="${weight}" fill="black" style="cursor:pointer; pointer-events:all;">${content}</text>`;
     };
 
@@ -67,8 +64,10 @@ function drawFrame() {
 
     svgStr += createEditableText(m + cw - fsW + 10, footerY + bh / 4, "projekt", "Projekt: Hauptverteilung", 12);
     
-    // Seite bleibt statisch (wird später über die Seitenlogik gesteuert)
     svgStr += `<text x="${m + cw - fsW + 10}" y="${footerMidY + bh / 4}" dy="0.3em" font-family="Arial" font-size="12" fill="black" style="pointer-events:none;">Seite: ${typeof currentPageId !== 'undefined' ? currentPageId : 1} / ${typeof pages !== 'undefined' ? pages.length : 1}</text>`;
+
+    // Platzhalter-Gruppe für Potenziale – wird von renderPotentials() befüllt
+    svgStr += `<g id="pot-layer"></g>`;
 
     svgStr += `</svg>`;
 
@@ -85,10 +84,15 @@ function drawFrame() {
             if (newVal !== null) {
                 if (!window.frameData) window.frameData = {};
                 window.frameData[id] = newVal;
-                drawFrame(); // Neu zeichnen, um Änderungen anzuzeigen
+                drawFrame();
             }
         });
     });
+
+    // NEU: Potenziale nach jedem Neuzeichnen des Rahmens wiederherstellen
+    if (typeof window.renderPotentials === 'function') {
+        window.renderPotentials();
+    }
 }
 
 // Initialisierung

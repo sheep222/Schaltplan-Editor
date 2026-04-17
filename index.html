@@ -9,21 +9,24 @@
 <body>
 
     <div id="area-1" class="area">
-        <h2>1 Verlauf</h2>
+        <h2>Verlauf</h2>
+        <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+            <button class="tool-btn" id="btn-undo" title="Rückgängig (Strg+Z)">Undo</button>
+            <button class="tool-btn" id="btn-redo" title="Wiederholen (Strg+Y)">Redo</button>
+        </div>
         <div class="history-item">▶ Projekt gestartet</div>
     </div>
 
     <div id="area-2" class="area">
-        <button class="tool-btn" id="btn-save-project">💾 Speichern</button>
-        <button class="tool-btn" id="btn-load-project">📂 Öffnen</button>
-        <button class="tool-btn" id="btn-export" style="background-color: #27ae60; color: white; padding: 5px 8px; font-size: 0.9em;">🖼️ Export</button>
-        <input type="file" id="file-input" class="hidden" accept=".json">
+        <button class="tool-btn" id="btn-quicksave" style="background-color: #27ae60; color: white; font-weight: bold;">💾 Speichern</button>
+        <button class="tool-btn" id="btn-project-list" style="background-color: #3498db; color: white;">📂 Projekte</button>
+        <button class="tool-btn" id="btn-export" style="background-color: #2ecc71; color: white; padding: 5px 8px; font-size: 0.9em;">🖼️ Export</button>
         
         <strong style="margin-left: 20px;">Seiten:</strong>
-        <div id="page-tabs" style="display: flex; gap: 5px; max-width: 300px; overflow-x: auto; white-space: nowrap; padding-bottom: 4px;"></div>
+        <div id="page-tabs" style="display: flex; gap: 5px; max-width: 180px; overflow-x: auto; white-space: nowrap; padding-bottom: 4px;"></div>
         
-        <button class="tool-btn" id="btn-add-page" style="margin-left: 10px;">➕ Neue Seite</button>
-        <button class="tool-btn" id="btn-delete-page" style="background-color: #e74c3c; color: white;" title="Aktuelle Seite löschen">➖ Seite löschen</button>
+        <button class="tool-btn" id="btn-add-page" style="margin-left: 10px;">Seite +</button>
+        <button class="tool-btn" id="btn-delete-page" style="background-color: #e74c3c; color: white;" title="Aktuelle Seite löschen">Seite -</button>
 
         <div style="margin-left: 20px; border-left: 2px solid #bdc3c7; padding-left: 20px; display: flex; align-items: center; gap: 5px;">
             <button class="tool-btn" id="btn-toggle-grid" title="Raster Ein/Ausblenden">🕸 Raster</button>
@@ -47,116 +50,110 @@
     </div>
 
     <div id="ihv-view" class="area hidden" style="grid-area: canvas; background-color: white; width: 1123px; height: 794px; margin: 20px auto; padding: 40px; box-shadow: 0 0 15px rgba(0,0,0,0.3); box-sizing: border-box; overflow-y: auto;">
-        <div class="ihv-header-row">
-            <h2 style="margin: 0; color: #8e44ad; font-size: 2em;">📑 Inhaltsverzeichnis</h2>
-        </div>
-        
+        <div class="ihv-header-row"><h2 style="margin: 0; color: #8e44ad; font-size: 2em;">📑 Inhaltsverzeichnis</h2></div>
         <div style="display: flex; gap: 15px; padding: 0 10px 5px 10px; color: #7f8c8d; font-weight: bold; font-size: 1.1em; border-bottom: 2px solid #ecf0f1; margin-bottom: 15px;">
-            <div style="width: 60px; text-align: center;">Blatt</div>
-            <div style="flex-grow: 1;">Beschreibung / Anlage</div>
-            <div style="width: 150px; text-align: center;">Datum / Rev.</div>
+            <div style="width: 60px; text-align: center;">Blatt</div><div style="flex-grow: 1;">Beschreibung / Anlage</div><div style="width: 150px; text-align: center;">Datum / Rev.</div>
         </div>
-        
-        <div id="ihv-list" style="flex-grow: 1;">
-            </div>
+        <div id="ihv-list" style="flex-grow: 1;"></div>
     </div>
 
     <div id="area-3" class="area">
-        <h2>3 Bauteile</h2>
+        <h2>Bauteile</h2>
         <div class="folder open"><div class="folder-header">Kontakt</div><div class="folder-content" id="kontakt"></div></div>
         <div class="folder"><div class="folder-header">Sicherungen</div><div class="folder-content" id="sicherungen"></div></div>
         <div class="folder"><div class="folder-header">Verbraucher</div><div class="folder-content" id="verbraucher"></div></div>
         <div class="folder"><div class="folder-header">Klemmen</div><div class="folder-content" id="klemmen"></div></div>
+        <div class="folder"><div class="folder-header">Elektronik</div><div class="folder-content" id="elektronik"></div></div>
     </div>
 
-    <div id="editor-modal" class="modal hidden">
-        <div class="modal-content">
-            <h3>Bauteil-Editor</h3>
-            <div class="editor-toolbar">
-                <button class="editor-btn" data-tool="select" style="background-color: #f1c40f;">👆 Auswählen</button>
-                <button class="editor-btn active" data-tool="line">/ Linie</button>
-                <button class="editor-btn" data-tool="rect">⬜ Rechteck</button>
-                <button class="editor-btn" data-tool="circle">◯ Kreis</button>
-                <button class="editor-btn" data-tool="text">T Text</button>
-                <button class="editor-btn" data-tool="port" style="color: red; font-weight: bold;">🔴 Punkt</button>
+    <div id="fullscreen-editor" class="hidden" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #ecf0f1; z-index: 9999; display: flex; flex-direction: column;">
+        
+        <div class="editor-top-bar" style="background: #2c3e50; padding: 15px 20px; display: flex; gap: 15px; align-items: center; color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.2); flex-wrap: wrap;">
+            <h3 style="margin: 0; color: #f1c40f; margin-right: 20px;">Bauteil-Editor</h3>
+            
+            <button class="editor-btn active" data-tool="select" style="background-color: #f1c40f; color: black; font-weight: bold;">👆 Auswählen</button>
+            <button class="editor-btn" data-tool="add-point" style="font-weight: bold; color: #2ecc71;">✛ Punkt einfügen</button>
+            
+            <div style="border-left: 2px solid #7f8c8d; height: 20px; margin: 0 5px;"></div>
+            
+            <button class="editor-btn" data-tool="line">/ Linie</button>
+            <button class="editor-btn" data-tool="rect">⬜ Rechteck</button>
+            <button class="editor-btn" data-tool="circle">◯ Kreis</button>
+            <button class="editor-btn" data-tool="triangle">🔺 Dreieck</button>
+            <button class="editor-btn" data-tool="semicircle">🌗 Halbkreis</button>
+            <button class="editor-btn" data-tool="arrow">↗️ Pfeil</button>
+            <button class="editor-btn" data-tool="text">T Text</button>
+            <button class="editor-btn" data-tool="port" style="color: #ff4757; font-weight: bold;">🔴 Punkt</button>
+
+            <div style="border-left: 2px solid #7f8c8d; padding-left: 15px; display: flex; gap: 15px; margin-left: 10px;">
+                <label style="cursor: pointer; display: flex; align-items: center; gap: 5px;"><input type="checkbox" id="tool-fill"> Füllen</label>
+                <label style="cursor: pointer; display: flex; align-items: center; gap: 5px;"><input type="checkbox" id="tool-dashed"> Gestrichelt</label>
             </div>
-            <div class="editor-canvas-container"><svg id="editor-canvas" viewBox="0 0 60 100"></svg></div>
-            <div class="editor-footer">
-                <button class="tool-btn" id="btn-save-comp" style="background: #2ecc71; color: white;">💾 Speichern</button>
-                <button class="tool-btn" id="btn-close-editor">Abbrechen</button>
+
+            <div style="border-left: 2px solid #7f8c8d; padding-left: 15px; display: flex; gap: 10px; margin-left: auto;">
+                <button class="tool-btn" id="btn-editor-grid" style="font-weight: bold; background: #f39c12; color: black;">🕸 Raster</button>
+                <button class="tool-btn" id="btn-toggle-code" style="background: #8e44ad; color: white; font-weight: bold;">📄 Code / Export</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 10px; margin-left: 15px;">
+                <button class="tool-btn" id="editor-zoom-out" title="Rauszoomen" style="font-weight: bold;">➖</button>
+                <span id="editor-zoom-level" style="font-size: 16px; font-weight: bold; width: 60px; text-align: center;">100%</span>
+                <button class="tool-btn" id="editor-zoom-in" title="Reinzoomen" style="font-weight: bold;">➕</button>
+                
+                <div style="border-left: 2px solid #7f8c8d; height: 30px; margin: 0 10px;"></div>
+                
                 <button class="tool-btn" id="btn-delete-element" style="background: #e74c3c; color: white;">🗑 Löschen</button>
+                <button class="tool-btn" id="btn-close-editor" style="background: #95a5a6; color: white;">Abbrechen</button>
+                <button class="tool-btn" id="btn-save-comp" style="background: #2ecc71; color: white; font-weight: bold;">💾 Speichern</button>
             </div>
+        </div>
+
+        <div style="display: flex; flex-grow: 1; overflow: hidden; position: relative;">
+            
+            <div id="editor-workspace" style="flex-grow: 1; overflow: auto; display: flex; justify-content: center; align-items: center; background: #dfe6e9;">
+                 <div id="editor-scale-wrapper" style="width: 800px; height: 800px; flex-shrink: 0; transform: scale(1); transition: transform 0.2s; position: relative; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+                     
+                     <div id="editor-grid-bg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; background-image: linear-gradient(to right, #ecf0f1 1px, transparent 1px), linear-gradient(to bottom, #ecf0f1 1px, transparent 1px); background-size: 5px 5px; background-position: 0 0;"></div>
+
+                     <div style="position: absolute; top: 320px; left: 340px; width: 120px; height: 160px; border: 2px dashed rgba(231, 76, 60, 0.7); pointer-events: none; z-index: 10;"></div>
+                     
+                     <svg id="editor-canvas" viewBox="-340 -320 800 800" width="800" height="800" style="position: absolute; top: 0; left: 0; display: block; overflow: visible;"></svg>
+                 </div>
+            </div>
+
+            <div id="editor-code-panel" class="hidden" style="width: 350px; background: white; border-left: 2px solid #bdc3c7; display: flex; flex-direction: column; box-shadow: -5px 0 15px rgba(0,0,0,0.1); z-index: 20;">
+                <div style="padding: 15px; background: #2c3e50; color: white; display: flex; justify-content: space-between; align-items: center;">
+                    <h4 style="margin: 0; color: #f1c40f;">LIVE CODE COMPILER</h4>
+                    <button id="btn-close-code" style="background: none; border: none; color: white; cursor: pointer; font-size: 1.2em;" title="Schließen">✖</button>
+                </div>
+                
+                <div style="padding: 10px; font-size: 0.8em; color: #7f8c8d; background: #ecf0f1; border-bottom: 1px solid #ddd;">
+                    Dieser Code entspricht genau dem Bauteil und kann in die Modul-Dateien kopiert werden.
+                </div>
+
+                <textarea id="editor-code-output" style="flex-grow: 1; padding: 15px; font-family: monospace; font-size: 12px; border: none; outline: none; resize: none; background: #f8f9fa; color: #2c3e50; white-space: pre;" readonly></textarea>
+                
+                <div style="padding: 15px; background: #ecf0f1; display: flex; gap: 10px; border-top: 1px solid #ddd;">
+                    <button class="tool-btn" id="btn-copy-code" style="flex: 1; background: #3498db; color: white; font-weight: bold;">📋 Kopieren</button>
+                    <button class="tool-btn" id="btn-download-code" style="flex: 1; background: #27ae60; color: white; font-weight: bold;">⬇️ HTML</button>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <div id="context-menu" class="hidden">
         <div class="menu-item" id="menu-edit" style="font-weight: bold; color: #f39c12;">✏️ Bearbeiten</div>
         <hr style="margin: 5px 0; border-top: 1px solid #eee;">
+        <div class="assign-only"><div class="menu-item" id="menu-assign">🔗 Zuordnen</div><div class="menu-item" id="menu-unassign">✂️ Zuordnung trennen</div><hr style="margin: 5px 0; border-top: 1px solid #eee;"><div class="menu-item" id="menu-toggle-numbering" style="color: #8e44ad; font-weight: bold;">🔄 Zählweise: DIN (Position)</div><hr style="margin: 5px 0; border-top: 1px solid #eee;"></div>
+        <div class="arrow-only"><div style="padding: 5px 15px; font-size: 11px; color: #7f8c8d; font-weight: bold;">POTENTIALPFEIL</div><div class="menu-item" id="menu-link-arrow">🔗 Mit anderem Pfeil verlinken...</div><div class="menu-item" id="menu-unlink-arrow">✂️ Verlinkung aufheben</div><div class="menu-item" id="menu-jump-arrow" style="color: #3498db; font-weight: bold;">➡️ Gehe zu Ziel-Seite</div><hr style="margin: 5px 0; border-top: 1px solid #eee;"></div>
+        <div class="contact-only"><div style="padding: 5px 15px; font-size: 11px; color: #7f8c8d; font-weight: bold;">HILFSKONTAKT</div><div class="menu-item" id="menu-type-normal">🟢 Normaler Kontakt</div><div class="menu-item" id="menu-type-timer-on">⏳ Einschaltverzögert (B)</div><div class="menu-item" id="menu-type-timer-off">⏳ Ausschaltverzögert (C)</div><div class="menu-item" id="menu-type-timer-onoff">⏳ Ein- & Ausschaltv. (A)</div><hr style="margin: 5px 0; border-top: 1px solid #eee;"></div>
+        <div class="taster-only"><div style="padding: 5px 15px; font-size: 11px; color: #7f8c8d; font-weight: bold;">TASTER / SCHALTER</div><div class="menu-item" id="menu-taster-no">🔘 Taster Schließer</div><div class="menu-item" id="menu-taster-nc">🔘 Taster Öffner</div><div class="menu-item" id="menu-taster-latch-no">🔒 Taster Schließer rastend</div><div class="menu-item" id="menu-taster-latch-nc">🔒 Taster Öffner rastend</div><hr style="margin: 5px 0; border-top: 1px solid #eee;"></div>
+        <div class="power-only"><div style="padding: 5px 15px; font-size: 11px; color: #7f8c8d; font-weight: bold;">LEISTUNGSTEIL</div><div class="menu-item" id="menu-power-1">⚡ 1-polig</div><div class="menu-item" id="menu-power-2">⚡ 2-polig</div><div class="menu-item" id="menu-power-3">⚡ 3-polig</div><div class="menu-item" id="menu-power-hubbel">👁��� Hubbel Ein/Ausblenden</div><hr style="margin: 5px 0; border-top: 1px solid #eee;"></div>
+        <div class="motor-only"><div style="padding: 5px 15px; font-size: 11px; color: #7f8c8d; font-weight: bold;">MOTOR (M3~)</div><div class="menu-item" id="menu-motor-3">⚙️ 3-polig (U1, V1, W1)</div><div class="menu-item" id="menu-motor-6">⚙️ 6-polig (Stern/Dreieck)</div><hr style="margin: 5px 0; border-top: 1px solid #eee;"></div>
+        <div class="terminal-only"><div style="padding: 5px 15px; font-size: 11px; color: #7f8c8d; font-weight: bold;">KLEMMENBLOCK</div><div class="menu-item" id="menu-terminals-count">🔢 Anzahl Klemmen ändern...</div><hr style="margin: 5px 0; border-top: 1px solid #eee;"></div>
+        <div class="lamp-only"><div style="padding: 5px 15px; font-size: 11px; color: #7f8c8d; font-weight: bold;">MELDELEUCHTE</div><div class="menu-item" id="menu-lamp-bulb">💡 Glühbirne (Standard)</div><div class="menu-item" id="menu-lamp-led">💡 LED (mit Pfeilen)</div><div class="menu-item" id="menu-lamp-blink">⚠️ Blinklicht</div><hr style="margin: 5px 0; border-top: 1px solid #eee;"></div>
         
-        <div class="assign-only">
-            <div class="menu-item" id="menu-assign">🔗 Zuordnen</div>
-            <div class="menu-item" id="menu-unassign">✂️ Zuordnung trennen</div>
-            <hr style="margin: 5px 0; border-top: 1px solid #eee;">
-            <div class="menu-item" id="menu-toggle-numbering" style="color: #8e44ad; font-weight: bold;">🔄 Zählweise: DIN (Position)</div>
-            <hr style="margin: 5px 0; border-top: 1px solid #eee;">
-        </div>
-
-        <div class="arrow-only">
-            <div style="padding: 5px 15px; font-size: 11px; color: #7f8c8d; font-weight: bold;">POTENTIALPFEIL</div>
-            <div class="menu-item" id="menu-link-arrow">🔗 Mit anderem Pfeil verlinken...</div>
-            <div class="menu-item" id="menu-unlink-arrow">✂️ Verlinkung aufheben</div>
-            <div class="menu-item" id="menu-jump-arrow" style="color: #3498db; font-weight: bold;">➡️ Gehe zu Ziel-Seite</div>
-            <hr style="margin: 5px 0; border-top: 1px solid #eee;">
-        </div>
-        
-        <div class="contact-only">
-            <div style="padding: 5px 15px; font-size: 11px; color: #7f8c8d; font-weight: bold;">HILFSKONTAKT</div>
-            <div class="menu-item" id="menu-type-normal">🟢 Normaler Kontakt</div>
-            <div class="menu-item" id="menu-type-timer-on">⏳ Einschaltverzögert (B)</div>
-            <div class="menu-item" id="menu-type-timer-off">⏳ Ausschaltverzögert (C)</div>
-            <div class="menu-item" id="menu-type-timer-onoff">⏳ Ein- & Ausschaltv. (A)</div>
-            <hr style="margin: 5px 0; border-top: 1px solid #eee;">
-        </div>
-
-        <div class="taster-only">
-            <div style="padding: 5px 15px; font-size: 11px; color: #7f8c8d; font-weight: bold;">TASTER / SCHALTER</div>
-            <div class="menu-item" id="menu-taster-no">🔘 Taster Schließer</div>
-            <div class="menu-item" id="menu-taster-nc">🔘 Taster Öffner</div>
-            <div class="menu-item" id="menu-taster-latch-no">🔒 Taster Schließer rastend</div>
-            <div class="menu-item" id="menu-taster-latch-nc">🔒 Taster Öffner rastend</div>
-            <hr style="margin: 5px 0; border-top: 1px solid #eee;">
-        </div>
-
-        <div class="power-only">
-            <div style="padding: 5px 15px; font-size: 11px; color: #7f8c8d; font-weight: bold;">LEISTUNGSTEIL</div>
-            <div class="menu-item" id="menu-power-1">⚡ 1-polig</div>
-            <div class="menu-item" id="menu-power-2">⚡ 2-polig</div>
-            <div class="menu-item" id="menu-power-3">⚡ 3-polig</div>
-            <div class="menu-item" id="menu-power-hubbel">👁️ Hubbel Ein/Ausblenden</div>
-            <hr style="margin: 5px 0; border-top: 1px solid #eee;">
-        </div>
-
-        <div class="motor-only">
-            <div style="padding: 5px 15px; font-size: 11px; color: #7f8c8d; font-weight: bold;">MOTOR (M3~)</div>
-            <div class="menu-item" id="menu-motor-3">⚙️ 3-polig (U1, V1, W1)</div>
-            <div class="menu-item" id="menu-motor-6">⚙️ 6-polig (Stern/Dreieck)</div>
-            <hr style="margin: 5px 0; border-top: 1px solid #eee;">
-        </div>
-
-        <div class="terminal-only">
-            <div style="padding: 5px 15px; font-size: 11px; color: #7f8c8d; font-weight: bold;">KLEMMENBLOCK</div>
-            <div class="menu-item" id="menu-terminals-count">🔢 Anzahl Klemmen ändern...</div>
-            <hr style="margin: 5px 0; border-top: 1px solid #eee;">
-        </div>
-
-        <div class="lamp-only">
-            <div style="padding: 5px 15px; font-size: 11px; color: #7f8c8d; font-weight: bold;">MELDELEUCHTE</div>
-            <div class="menu-item" id="menu-lamp-bulb">💡 Glühbirne (Standard)</div>
-            <div class="menu-item" id="menu-lamp-led">💡 LED (mit Pfeilen)</div>
-            <div class="menu-item" id="menu-lamp-blink">⚠️ Blinklicht</div>
-            <hr style="margin: 5px 0; border-top: 1px solid #eee;">
-        </div>
-
         <div class="menu-item" id="menu-rename">📝 Umbenennen</div>
         <hr style="margin: 5px 0; border-top: 1px solid #eee;">
         <div class="menu-item" id="menu-rotate">⟳ 90° Drehen</div>
@@ -164,15 +161,16 @@
         <div class="menu-item" id="menu-delete" style="color: #e74c3c;">🗑 Bauteil löschen</div>
     </div>
 
-    <div id="wire-context-menu" class="hidden" style="position: absolute; background: white; border: 1px solid #ccc; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); z-index: 1000; min-width: 150px;">
+    <!-- Wire Context Menu -->
+    <div id="wire-context-menu" class="hidden" style="position: fixed; background: white; border: 1px solid #bdc3c7; box-shadow: 2px 2px 10px rgba(0,0,0,0.2); border-radius: 4px; padding: 5px 0; z-index: 100000; min-width: 200px; font-family: Arial, sans-serif;">
         <div class="menu-item" id="wire-menu-toggle-points">🔵 Punkte Ein/Aus</div>
         <div class="menu-item" id="wire-menu-rename">📝 Name vergeben/bearbeiten</div>
         <hr style="margin: 5px 0; border-top: 1px solid #eee;">
         <div style="padding: 5px 15px; font-size: 11px; color: #7f8c8d; font-weight: bold;">KABELFARBE</div>
-        <div class="menu-item" id="wire-menu-color-black" data-color="black">⚫ Schwarz</div>
-        <div class="menu-item" id="wire-menu-color-blue" data-color="blue">🔵 Blau</div>
-        <div class="menu-item" id="wire-menu-color-gray" data-color="gray">⚪ Grau</div>
-        <div class="menu-item" id="wire-menu-color-brown" data-color="brown">🟤 Braun</div>
+        <div class="menu-item" id="wire-menu-color-black">⚫ Schwarz</div>
+        <div class="menu-item" id="wire-menu-color-blue">🔵 Blau</div>
+        <div class="menu-item" id="wire-menu-color-gray">⚪ Grau</div>
+        <div class="menu-item" id="wire-menu-color-brown">🟤 Braun</div>
         <hr style="margin: 5px 0; border-top: 1px solid #eee;">
         <div class="menu-item" id="wire-menu-delete" style="color: #e74c3c;">🗑 Linie löschen</div>
     </div>
@@ -183,6 +181,8 @@
     <script src="modul_verbraucher.js"></script>
     <script src="modul_verbindungen.js"></script>
     <script src="modul_sicherungen.js"></script>
+    <script src="modul_potenziale.js"></script>
+    <script src="modul_elektronik.js"></script>
     <script src="main.js"></script>
     <script src="verkabelung.js"></script>
     <script src="bauteile.js"></script>
@@ -190,6 +190,8 @@
     <script src="ui.js"></script>
     <script src="editor.js"></script>
     <script src="export.js"></script>
-    <script src="rahmen.js"></script> 
+    <script src="rahmen.js"></script>
+    <script src="storage.js"></script>
+    <script src="manager-ui.js"></script>
 </body>
 </html>

@@ -1,15 +1,16 @@
-// www.kreativekiste.de // 08.04.2026 // Version 1.1 (Registry)
+// www.kreativekiste.de // 08.04.2026 // Version 1.2 (Registry)
 
 window.ComponentRegistry = {
     // Hier speichern wir die Baupläne für alle bekannten Bauteile
     definitions: {},
     
-    // Ordner-Struktur für die Seitenleiste - HIER SIND JETZT DEINE 4 KORREKTEN ORDNER!
+    // Ordner-Struktur für die Seitenleiste
     folders: [
-        { id: "kontakt", name: "Kontakt", open: true },
-        { id: "sicherungen", name: "Sicherungen", open: false },
-        { id: "verbraucher", name: "Verbraucher", open: false },
-        { id: "klemmen", name: "Klemmen", open: false }
+        { id: "kontakt",    name: "Kontakt",    open: true  },
+        { id: "sicherungen",name: "Sicherungen",open: false },
+        { id: "verbraucher",name: "Verbraucher",open: false },
+        { id: "klemmen",    name: "Klemmen",    open: false },
+        { id: "elektronik", name: "Elektronik", open: false }
     ],
 
     /**
@@ -29,8 +30,8 @@ window.ComponentRegistry = {
         const area3 = document.getElementById('area-3');
         if (!area3) return;
 
-        // Bisherigen Inhalt (außer der Überschrift) löschen
-        area3.innerHTML = '<h2>3 Bauteile</h2>';
+        // Bisherigen Inhalt löschen
+        area3.innerHTML = '<h2>Bauteile</h2>';
 
         this.folders.forEach(folder => {
             // Finde alle Bauteile, die in diesen Ordner gehören

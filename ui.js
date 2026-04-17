@@ -18,6 +18,18 @@ setTimeout(() => {
 
 const btnClear = document.getElementById('btn-clear');
 if (btnClear) btnClear.addEventListener('click', clearCanvas);
+const btnUndo = document.getElementById('btn-undo');
+if (btnUndo) {
+    btnUndo.addEventListener('click', () => {
+        if (typeof window.undoLastAction === 'function') window.undoLastAction();
+    });
+}
+const btnRedo = document.getElementById('btn-redo');
+if (btnRedo) {
+    btnRedo.addEventListener('click', () => {
+        if (typeof window.redoLastAction === 'function') window.redoLastAction();
+    });
+}
 
 // --- ORDNER STEUERUNG & BOMBENFESTER KONTEXT-MENÜ-FIX ---
 document.addEventListener('click', (e) => {
@@ -99,6 +111,19 @@ function showContextMenu(x, y) {
     if (toggleBtn) {
         toggleBtn.innerHTML = window.numberingMode === 'din' ? '🔄 Zählweise: DIN (Position)' : '🔄 Zählweise: Fortlaufend';
     }
+    
+    if (window.contextMenuTarget) {
+        const type2 = window.contextMenuTarget.dataset.type;
+        const hubbelBtn = document.getElementById('menu-power-hubbel');
+        
+        if (type2 === 'schmelzsicherung' || type2 === 'leitungsschutzschalter' || type2 === 'fi_schutzschalter') {
+            const powerMenu = document.querySelector('.power-only');
+            if (powerMenu) powerMenu.style.display = 'block';
+            if (hubbelBtn) hubbelBtn.style.display = 'none';
+        } else if (type2 === 'hauptkontakt') {
+            if (hubbelBtn) hubbelBtn.style.display = 'block';
+        }
+    }
 }
 
 function hideContextMenu() {
@@ -109,7 +134,7 @@ function hideContextMenu() {
     }
 }
 
-// --- NEU: KABEL KONTEXTMENÜ STEUERUNG ---
+// --- KABEL KONTEXTMENÜ STEUERUNG ---
 window.showWireContextMenu = function(x, y, conn) {
     hideContextMenu(); // Bauteilmenü sicherheitshalber schließen
     window.currentWireConn = conn;
@@ -130,31 +155,36 @@ function hideWireContextMenu() {
     }
 }
 
-// Event-Listener für das Kabel-Menü anlegen
-const wireMenuPoints = document.getElementById('wire-menu-toggle-points');
-if (wireMenuPoints) {
-    wireMenuPoints.addEventListener('click', (e) => {
-        e.stopPropagation(); 
-        hideWireContextMenu();
-        if (window.currentWireConn) {
-            window.currentWireConn.showHandles = !window.currentWireConn.showHandles;
-            if (typeof updateCables === 'function') updateCables();
-            if (typeof addHistory === 'function') addHistory(window.currentWireConn.showHandles ? 'Kabel-Punkte eingeblendet' : 'Kabel-Punkte ausgeblendet');
-        }
-    });
-
-    document.getElementById('wire-menu-rename').addEventListener('click', (e) => {
-        e.stopPropagation(); 
-        hideWireContextMenu();
-        if (window.currentWireConn) {
-            const newName = prompt('Kabelname eingeben:', window.currentWireConn.name || '');
-            if (newName !== null) {
-                window.currentWireConn.name = newName;
+// ✅ Wire-Menü Event-Listener – mit setTimeout damit das DOM sicher geladen ist
+setTimeout(() => {
+    const wireMenuPoints = document.getElementById('wire-menu-toggle-points');
+    if (wireMenuPoints) {
+        wireMenuPoints.addEventListener('click', (e) => {
+            e.stopPropagation(); 
+            hideWireContextMenu();
+            if (window.currentWireConn) {
+                window.currentWireConn.showHandles = !window.currentWireConn.showHandles;
                 if (typeof updateCables === 'function') updateCables();
-                if (typeof addHistory === 'function') addHistory('Kabelname geändert');
+                if (typeof addHistory === 'function') addHistory(window.currentWireConn.showHandles ? 'Kabel-Punkte eingeblendet' : 'Kabel-Punkte ausgeblendet');
             }
-        }
-    });
+        });
+    }
+
+    const wireMenuRename = document.getElementById('wire-menu-rename');
+    if (wireMenuRename) {
+        wireMenuRename.addEventListener('click', (e) => {
+            e.stopPropagation(); 
+            hideWireContextMenu();
+            if (window.currentWireConn) {
+                const newName = prompt('Kabelname eingeben:', window.currentWireConn.name || '');
+                if (newName !== null) {
+                    window.currentWireConn.name = newName;
+                    if (typeof updateCables === 'function') updateCables();
+                    if (typeof addHistory === 'function') addHistory('Kabelname geändert');
+                }
+            }
+        });
+    }
 
     ['black', 'blue', 'gray', 'brown'].forEach(color => {
         const colorBtn = document.getElementById(`wire-menu-color-${color}`);
@@ -171,25 +201,27 @@ if (wireMenuPoints) {
         }
     });
 
-    document.getElementById('wire-menu-delete').addEventListener('click', (e) => {
-        e.stopPropagation(); 
-        hideWireContextMenu();
-        if (window.currentWireConn) {
-            if (window.currentWireConn.pathElem) window.currentWireConn.pathElem.remove();
-            if (window.currentWireConn.h1) window.currentWireConn.h1.remove();
-            if (window.currentWireConn.h2) window.currentWireConn.h2.remove();
-            if (window.currentWireConn.h3) window.currentWireConn.h3.remove();
-            if (window.currentWireConn.textElem) window.currentWireConn.textElem.remove();
-            
-            // Verbindung aus dem Array löschen
-            if (typeof connections !== 'undefined') {
-                connections = connections.filter(c => c !== window.currentWireConn);
+    const wireMenuDelete = document.getElementById('wire-menu-delete');
+    if (wireMenuDelete) {
+        wireMenuDelete.addEventListener('click', (e) => {
+            e.stopPropagation(); 
+            hideWireContextMenu();
+            if (window.currentWireConn) {
+                if (window.currentWireConn.pathElem) window.currentWireConn.pathElem.remove();
+                if (window.currentWireConn.h1) window.currentWireConn.h1.remove();
+                if (window.currentWireConn.h2) window.currentWireConn.h2.remove();
+                if (window.currentWireConn.h3) window.currentWireConn.h3.remove();
+                if (window.currentWireConn.textElem) window.currentWireConn.textElem.remove();
+                
+                if (typeof connections !== 'undefined') {
+                    connections = connections.filter(c => c !== window.currentWireConn);
+                }
+                if (typeof updateCables === 'function') updateCables();
+                if (typeof addHistory === 'function') addHistory('Kabel gelöscht');
             }
-            if (typeof updateCables === 'function') updateCables();
-            if (typeof addHistory === 'function') addHistory('Kabel gelöscht');
-        }
-    });
-}
+        });
+    }
+}, 200);
 
 const menuEditBtn = document.getElementById('menu-edit');
 if (menuEditBtn) {
@@ -201,20 +233,20 @@ if (menuEditBtn) {
     });
 }
 
-// --- Speichern und Laden (inklusive numberingMode) ---
-const btnSaveProject = document.getElementById('btn-save-project');
-if (btnSaveProject) {
-    btnSaveProject.onclick = () => {
-        if(typeof saveCurrentPageState === 'function') saveCurrentPageState();
-        const data = { 
-            pages: typeof pages !== 'undefined' ? pages : [], 
-            coilCounter: typeof coilCounter !== 'undefined' ? coilCounter : 1, 
-            numberingMode: window.numberingMode 
-        };
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
-        const downloadAnchor = document.createElement('a'); downloadAnchor.setAttribute("href", dataStr); downloadAnchor.setAttribute("download", "schaltplan_projekt.json"); downloadAnchor.click();
-        if (typeof addHistory === 'function') addHistory('Projekt gespeichert');
-    };
+
+// ===PROJEKT-VERWALTUNG ===
+const btnQuickSave = document.getElementById('btn-quicksave');
+if (btnQuickSave) {
+    btnQuickSave.addEventListener('click', () => {
+        window.ProjectStorage.saveProject();
+    });
+}
+
+const btnProjectList = document.getElementById('btn-project-list');
+if (btnProjectList) {
+    btnProjectList.addEventListener('click', () => {
+        window.ProjectManagerUI.showDialog();
+    });
 }
 
 const fileInput = document.getElementById('file-input');
@@ -230,8 +262,11 @@ if (btnLoadProject && fileInput) {
             if (typeof coilCounter !== 'undefined') coilCounter = data.coilCounter || 1; 
             if (typeof currentPageId !== 'undefined' && data.pages.length > 0) currentPageId = data.pages[0].id;
             window.numberingMode = data.numberingMode || 'din';
+            window.potentials = data.potentials || [];
+            window.potentialSettings = data.potentialSettings || { nPosition: 'bottom', pePosition: 'bottom' };
             if(typeof loadPageState === 'function' && typeof currentPageId !== 'undefined') loadPageState(currentPageId); 
             if(typeof renderTabs === 'function') renderTabs();
+            if(typeof window.renderPotentials === 'function') window.renderPotentials();
             if (typeof addHistory === 'function') addHistory('Projekt geladen');
         };
         reader.readAsText(file);

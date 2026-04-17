@@ -23,7 +23,14 @@ canvas.addEventListener('dragover', (e) => e.preventDefault());
 
 canvas.addEventListener('drop', (e) => {
     e.preventDefault(); if (!draggedHTML) return;
-    
+
+    // NEU: Potenzial-Drop abfangen – eigenes Modul übernimmt
+    if (draggedType && draggedType.startsWith('pot_')) {
+        if (typeof window.handlePotentialDrop === 'function') window.handlePotentialDrop(draggedType);
+        draggedHTML = null; draggedType = null;
+        return;
+    }
+
     const zoom = window.currentZoom || 1.0;
     const rect = canvas.getBoundingClientRect(); 
     const x = ((e.clientX - rect.left) / zoom) - 30; 
@@ -63,6 +70,7 @@ canvas.addEventListener('drop', (e) => {
         newComp.dataset.label = labelText; 
         newComp.dataset.baseLabel = labelText; 
         updateLabel(newComp, labelText, 'pos-bottom-left'); 
+        updatePowerContactVisuals(newComp);
     }
     if (draggedType === 'fi_schutzschalter') {
         newComp.dataset.poles = "1"; // 1 bedeutet: 1x L + N + PE
@@ -181,7 +189,10 @@ window.updatePowerContactVisuals = function(compEl) {
     svg.setAttribute('viewBox', `0 0 ${width + 10} 100`); 
     svg.setAttribute('width', width); 
     
-    let newHTML = ''; 
+    let newHTML = '';
+    if (type === 'leitungsschutzschalter' && typeof window.LSS_COREL_DEFS === 'string') {
+        newHTML += window.LSS_COREL_DEFS;
+    }
     for (let i = 0; i < totalLines; i++) { 
         const x = 30 + (i * 30); 
         const isN = (type === 'fi_schutzschalter' && i === totalLines - 2);
@@ -203,14 +214,11 @@ window.updatePowerContactVisuals = function(compEl) {
             newHTML += `<rect x="${x-8}" y="30" width="16" height="40" fill="none" stroke="black" stroke-width="2"/>`;
             newHTML += `<line x1="${x}" y1="30" x2="${x}" y2="70" stroke="black" stroke-width="2"/>`;
             newHTML += `<line x1="${x}" y1="70" x2="${x}" y2="90" stroke="black" stroke-width="2"/>`;
-        } else if (type === 'leitungsschutzschalter') {
-            newHTML += `<line x1="${x}" y1="10" x2="${x}" y2="40" stroke="black" stroke-width="2"/>`;
-            newHTML += `<line x1="${x-4}" y1="20" x2="${x+4}" y2="28" stroke="black" stroke-width="1.5"/>`;
-            newHTML += `<line x1="${x+4}" y1="20" x2="${x-4}" y2="28" stroke="black" stroke-width="1.5"/>`;
-            newHTML += `<line x1="${x-8}" y1="40" x2="${x}" y2="70" stroke="black" stroke-width="2"/>`;
-            newHTML += `<path d="M ${x-12} 45 L ${x-16} 45 L ${x-16} 55 L ${x-12} 55" fill="none" stroke="black" stroke-width="1.5"/>`;
-            newHTML += `<path d="M ${x-12} 60 A 4 4 0 0 1 ${x-12} 68" fill="none" stroke="black" stroke-width="1.5"/>`;
-            newHTML += `<line x1="${x}" y1="70" x2="${x}" y2="90" stroke="black" stroke-width="2"/>`;
+        } else if (type === 'leitungsschutzschalter' && typeof window.LSS_COREL_GRAPHIC === 'string') {
+            const sc = window.LSS_COREL_SCALE || 0.0115;
+            const cx = window.LSS_COREL_CX || 24297;
+            const cy = window.LSS_COREL_CY || 24127;
+            newHTML += `<g transform="translate(${x} 50) scale(${sc}) translate(${-cx} ${-cy})">${window.LSS_COREL_GRAPHIC}</g>`;
         } else if (type === 'fi_schutzschalter') {
             // L-Pole vom FI (geschaltet)
             newHTML += `<line x1="${x}" y1="10" x2="${x}" y2="40" stroke="black" stroke-width="2"/>`;

@@ -227,6 +227,7 @@ function loadPageState(id) {
     });
 
     if(typeof updateCables === 'function') updateCables();
+    if(typeof window.renderPotentials === 'function') window.renderPotentials(); // Potenziale neu zeichnen
 
     if (window.crossPageAssign && window.crossPageAssign.active) {
         if (typeof canvas !== 'undefined' && canvas) canvas.classList.add('assign-mode');
