@@ -1,4 +1,4 @@
-// www.kreativekiste.de // 09.04.2026 // Version 1.0
+// www.kreativekiste.de // 09.04.2026 // Version 1.1
 
 # ⚡ Elektro-Schaltplan Web-Tool
 
@@ -16,6 +16,8 @@ Hey! Willkommen bei deinem interaktiven Tool zum Erstellen von Elektro-Installat
 * **Es gibt eine Vielz8ahgl von Kontakten Öffner/Schließer/Zeiten
 * **Verlinke über mehrere Seiten deine Bauteile
 * **Verschiebe Kabel
+* **Potenziale
+* ** Speichern und Laden
 
 ## 🛠 Startanleitung
 
@@ -30,9 +32,7 @@ Alternativ kannst du auch auf die Index klicken, dann kannst du aber nicht speic
 
 ## ⚠️ In Arbeit
 
-> Bugs
-> Leiter und Potenziale
-> Bauteile zeichnen
+> Bugs und Bauteile
 
 Wenn du Fragen hast oder nach weiteren coolen Projekten suchst, schau einfach mal auf meiner Seite vorbei:
 
