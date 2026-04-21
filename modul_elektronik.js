@@ -38,7 +38,25 @@ window.ComponentRegistry.register('led', {
     `
 });
 
-// 3. Transistor NPN
+// 3. Diode
+window.ComponentRegistry.register('diode', {
+    folder: 'elektronik',
+    title: 'Diode',
+    defaultData: {},
+    svg: `
+        <svg viewBox="0 0 60 100" width="60" height="100" class="symbol">
+            <line x1="30" y1="10" x2="30" y2="35" stroke="black" stroke-width="2"/>
+            <polygon points="16,35 44,35 30,60" fill="none" stroke="black" stroke-width="2"/>
+            <line x1="16" y1="60" x2="44" y2="60" stroke="black" stroke-width="2"/>
+            <line x1="30" y1="60" x2="30" y2="90" stroke="black" stroke-width="2"/>
+            
+            <circle cx="30" cy="10" r="4" fill="red" class="port"/>
+            <circle cx="30" cy="90" r="4" fill="red" class="port"/>
+        </svg>
+    `
+});
+
+// 4. Transistor NPN
 window.ComponentRegistry.register('transistor_npn', {
     folder: 'elektronik',
     title: 'Transistor NPN',
@@ -68,7 +86,7 @@ window.ComponentRegistry.register('transistor_npn', {
     `
 });
 
-// 4. Transistor PNP
+// 5. Transistor PNP
 window.ComponentRegistry.register('transistor_pnp', {
     folder: 'elektronik',
     title: 'Transistor PNP',
@@ -98,7 +116,7 @@ window.ComponentRegistry.register('transistor_pnp', {
     `
 });
 
-// 5. LDR (Lichtabhängiger Widerstand)
+// 6. LDR (Lichtabhängiger Widerstand)
 window.ComponentRegistry.register('ldr', {
     folder: 'elektronik',
     title: 'LDR (Fotowiderstand)',
@@ -122,7 +140,7 @@ window.ComponentRegistry.register('ldr', {
     `
 });
 
-// 6. Potentiometer (Poti)
+// 7. Potentiometer (Poti)
 window.ComponentRegistry.register('poti', {
     folder: 'elektronik',
     title: 'Potentiometer',
@@ -147,7 +165,7 @@ window.ComponentRegistry.register('poti', {
     `
 });
 
-// 7. Batterie / Spannungsquelle
+// 8. Batterie / Spannungsquelle
 window.ComponentRegistry.register('batterie', {
     folder: 'elektronik',
     title: 'Batterie',
@@ -175,7 +193,30 @@ window.ComponentRegistry.register('batterie', {
     `
 });
 
-// 8. Kondensator (unpolar)
+// 8. Batterie / Spannungsquelle
+window.ComponentRegistry.register('spannungsquelle_dc', {
+    folder: 'elektronik',
+    title: 'Spannungsquelle_dc',
+    defaultData: {},
+    svg: `
+        <svg viewBox="0 0 60 100" width="60" height="100" class="symbol">
+            <line x1="30" y1="10" x2="30" y2="42" stroke="black" stroke-width="2"/>
+            <!-- Plus-Pol (lange Linie) -->
+            <line x1="12" y1="42" x2="48" y2="42" stroke="black" stroke-width="3"/>
+            <!-- Minus-Pol (kurze Linie) -->
+            <line x1="18" y1="51" x2="42" y2="51" stroke="black" stroke-width="2"/>
+            <!-- Anschluss -->
+            <line x1="30" y1="51" x2="30" y2="90" stroke="black" stroke-width="2"/>
+            <!-- +/- Beschriftung -->
+            <text x="50" y="47" font-size="10" font-family="Arial" font-weight="bold">+</text>
+            <text x="2" y="56" font-size="10" font-family="Arial" font-weight="bold">−</text>
+            <circle cx="30" cy="10" r="4" fill="red" class="port"/>
+            <circle cx="30" cy="90" r="4" fill="red" class="port"/>
+        </svg>
+    `
+});
+
+// 9. Kondensator (unpolar)
 window.ComponentRegistry.register('kondensator', {
     folder: 'elektronik',
     title: 'Kondensator',
@@ -190,6 +231,28 @@ window.ComponentRegistry.register('kondensator', {
             <line x1="30" y1="56" x2="30" y2="90" stroke="black" stroke-width="2"/>
             <circle cx="30" cy="10" r="4" fill="red" class="port"/>
             <circle cx="30" cy="90" r="4" fill="red" class="port"/>
+        </svg>
+    `
+});
+
+// 10. Spannungsmessgerät
+window.ComponentRegistry.register('voltmeter', {
+    folder: 'elektronik',
+    title: 'Spannungsmessgerät',
+    defaultData: {},
+    svg: `
+        <svg viewBox="0 0 60 100" width="60" height="100" class="symbol">
+            <!-- Anschluss oben -->    
+            <line x1="45" y1="10" x2="45" y2="37" stroke="black" stroke-width="2"/>
+            <line x1="45" y1="10" x2="4" y2="10" stroke="black" stroke-width="2"/>
+            <circle cx="4" cy="10" r="4" fill="red" class="port"/>
+            <!-- Kreis mit "V" in der Mitte -->
+            <circle cx="45" cy="50" r="14" fill="none" stroke="black" stroke-width="1.5"/>
+            <text x="45" y="50" text-anchor="middle" dominant-baseline="central" font-size="20" font-family="Arial" fill="#000">V</text>
+            <!-- Anschluss unten -->
+            <line x1="45" y1="65" x2="45" y2="90" stroke="black" stroke-width="2"/>
+            <line x1="45" y1="90" x2="4" y2="90" stroke="black" stroke-width="2"/>
+            <circle cx="4" cy="90" r="4" fill="red" class="port"/>
         </svg>
     `
 });
