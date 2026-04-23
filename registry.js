@@ -6,11 +6,11 @@ window.ComponentRegistry = {
     
     // Ordner-Struktur für die Seitenleiste
     folders: [
-        { id: "kontakt",    name: "Kontakt",    open: true  },
+        { id: "elektronik", name: "Elektronik", open: true },
+        { id: "kontakt",    name: "Kontakt",    open: false  },
         { id: "sicherungen",name: "Sicherungen",open: false },
         { id: "verbraucher",name: "Verbraucher",open: false },
-        { id: "klemmen",    name: "Klemmen",    open: false },
-        { id: "elektronik", name: "Elektronik", open: false }
+        { id: "klemmen",    name: "Klemmen",    open: false }
     ],
 
     /**
