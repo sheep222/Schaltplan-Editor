@@ -9,7 +9,7 @@ Hey! Willkommen bei deinem interaktiven Tool zum Erstellen von Elektro-Installat
 * **Multipage-System:** Navigiere flüssig zwischen deinem **D**eckblatt, dem **I**nhaltsverzeichnis und deinen Schaltplan-Seiten (**1, 2, 3...**).
 * **Dynamisches IHV:** Dein Inhaltsverzeichnis aktualisiert sich von selbst, sobald du neue Seiten hinzufügst.
 * **Profi-Deckblatt:** Verpasse deinem Projekt einen sauberen Look mit drei individuell anpassbaren Textfeldern.
-* **Bauteil-Bibliothek:** Nutze fertige Symbole für Schütze, Sicherungen, Motoren, Klemmen und Lampen.
+* **Bauteil-Bibliothek:** Nutze fertige Symbole für Schütze, Sicherungen, Motoren, Klemmen, Lampen und Elektronik-Bauteilen
 * **SVG-Editor:** Erstelle oder bearbeite Bauteile direkt im Tool.
 * **Weiße Spulen direkt Kontakte zu und sehe diese im Kontaktspiegel
 * **Schalt zwischen verschiedenen Zählweisen um
@@ -23,10 +23,12 @@ Hey! Willkommen bei deinem interaktiven Tool zum Erstellen von Elektro-Installat
 
 Damit alles reibungslos läuft, beachte bitte den Sicherheitsaspekt moderner Browser (CORS-Policy):
 
+0.  Es ist Python installiert und im Pfad
 1.  Lade alle Projektdaten in einen lokalen Ordner.
-2.  Öffne den Ordner in einem Editor wie **VS Code**.
-3.  Starte das Projekt über einen lokalen Webserver (z. B. die Erweiterung **"Live Server"** in VS Code).
-4.  Öffne die Adresse `http://127.0.0.1:5500` in deinem Browser.
+2.  öffne Terminal (z.B. cmd in Windows)
+3.  wechsle in das Verzeichnis von 1. (cd )
+4.  gib ein: python -m http.server 8001
+4.  Öffne die Adresse `http://127.0.0.1:8001` in deinem Browser.
 
 Alternativ kannst du auch auf die Index klicken, dann kannst du aber nicht speichern oder neue Dateien laden
 
