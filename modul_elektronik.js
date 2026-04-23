@@ -256,3 +256,23 @@ window.ComponentRegistry.register('voltmeter', {
         </svg>
     `
 });
+
+// 11. Strommessgerät
+window.ComponentRegistry.register('amperemeter', {
+    folder: 'elektronik',
+    title: 'Strommessgerät',
+    defaultData: {},
+    svg: `
+        <svg viewBox="0 0 60 100" width="60" height="100" class="symbol">
+            <!-- Anschluss oben -->    
+            <line x1="45" y1="10" x2="45" y2="37" stroke="black" stroke-width="2"/>
+            <circle cx="45" cy="10" r="4" fill="red" class="port"/>
+            <!-- Kreis mit "V" in der Mitte -->
+            <circle cx="45" cy="50" r="14" fill="none" stroke="black" stroke-width="1.5"/>
+            <text x="45" y="50" text-anchor="middle" dominant-baseline="central" font-size="20" font-family="Arial" fill="#000">A</text>
+            <!-- Anschluss unten -->
+            <line x1="45" y1="65" x2="45" y2="90" stroke="black" stroke-width="2"/>
+            <circle cx="45" cy="90" r="4" fill="red" class="port"/>
+        </svg>
+    `
+});

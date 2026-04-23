@@ -2,6 +2,11 @@
 
 if (typeof window.fCounter === 'undefined') window.fCounter = 1;
 if (typeof window.qCounter === 'undefined') window.qCounter = 1; // Zähler für Schalter/LSS (BMK: -Q)
+if (typeof window.cCounter === 'undefined') window.cCounter = 1; // Zähler für Kondensatoren
+if (typeof window.dCounter === 'undefined') window.dCounter = 1; // Zähler für Dioden
+if (typeof window.rCounter === 'undefined') window.rCounter = 1; // Zähler für Widerstände
+if (typeof window.vCounter === 'undefined') window.vCounter = 1; // Zähler für Voltmeter
+if (typeof window.aCounter === 'undefined') window.aCounter = 1; // Zähler für Amperemeter
 
 window.attachDragListeners = function() {
     const items = document.querySelectorAll('.component-item');
@@ -79,6 +84,41 @@ canvas.addEventListener('drop', (e) => {
         newComp.dataset.baseLabel = labelText; 
         updateLabel(newComp, labelText, 'pos-bottom-left'); 
         updatePowerContactVisuals(newComp); // Layout sofort anwenden
+    }
+    if (draggedType === 'widerstand') {
+        newComp.dataset.poles = "1";
+        const labelText = `R${window.rCounter++}`; 
+        newComp.dataset.label = labelText; 
+        newComp.dataset.baseLabel = labelText; 
+        updateLabel(newComp, labelText, 'pos-bottom-left'); 
+    }
+    if (draggedType === 'diode') {
+        newComp.dataset.poles = "1";
+        const labelText = `D${window.dCounter++}`; 
+        newComp.dataset.label = labelText; 
+        newComp.dataset.baseLabel = labelText; 
+        updateLabel(newComp, labelText, 'pos-bottom-left'); 
+    }
+    if (draggedType === 'kondensator') {
+        newComp.dataset.poles = "1";
+        const labelText = `C${window.cCounter++}`; 
+        newComp.dataset.label = labelText; 
+        newComp.dataset.baseLabel = labelText; 
+        updateLabel(newComp, labelText, 'pos-bottom-left'); 
+    }
+    if (draggedType === 'voltmeter') {
+        newComp.dataset.poles = "1";
+        const labelText = `V${window.vCounter++}`; 
+        newComp.dataset.label = labelText; 
+        newComp.dataset.baseLabel = labelText; 
+        updateLabel(newComp, labelText, 'pos-bottom-left'); 
+    }
+    if (draggedType === 'amperemeter') {
+        newComp.dataset.poles = "1";
+        const labelText = `A${window.aCounter++}`; 
+        newComp.dataset.label = labelText; 
+        newComp.dataset.baseLabel = labelText; 
+        updateLabel(newComp, labelText, 'pos-bottom-left'); 
     }
 
     const ports = newComp.querySelectorAll('.port');
